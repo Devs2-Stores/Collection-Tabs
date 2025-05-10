@@ -1,0 +1,62 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Dependency directories
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Build output
+dist/
+client/dist/
+server/dist/
+
+# Environment variables
+.env
+client/.env
+server/.env
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDEs and editors
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Tests
+/coverage
+/.nyc_output
+/test-results/
+
+# Miscellaneous
+*.local
+*.log
+*.lock
+*.bak
+*.tmp
+
+# Ignore public assets that are generated or unnecessary
+client/public/tinymce/
+client/public/*.svg
+client/public/*.jpg
+client/public/*.png
+
+# Ignore specific files in client
+client/src/assets/*.tmp
+client/src/assets/*.bak
+
+# Ignore specific files in server
+server/src/**/*.tmp
+server/src/**/*.bak
