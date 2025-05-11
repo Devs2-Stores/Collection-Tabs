@@ -1,8 +1,10 @@
-import { useEffect } from "react";
-import TinyEditor from "../../../components/Editor";
 import { useSearchParams } from "react-router";
 import { metafieldsService } from "../../../services/MetafieldsService";
+import Spinner from "../../../components/Spinner";
 
+import { Space, Flex, Typography, Button, Tabs } from 'antd';
+import CollectionMetafieldsForm from "./form";
+import { use, useEffect } from "react";
 const CollectionMetafields = () => {
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
@@ -10,52 +12,35 @@ const CollectionMetafields = () => {
     type: "collection",
     id: id,
   });
-  useEffect(() => {
-    
-    console.log(id);
-    
-  }, []);
+  if (field_loading) return <Spinner />;
+  const tabItems = field_data?.metafields.map((field) => {
+    const title = JSON.parse(field.value).title;
+    return ({
+      closable: false,
+      key: field.id,
+      label: title,
+      children: <CollectionMetafieldsForm field={field} objectID={id} />,
+    })
+  });
+  const handleOnClick = (key) => {
+    const selectedTab = field_data?.metafields.find((field) => field.id === key);
+    if (selectedTab) {
+      // Handle the click event for the selected tab
+      console.log("Selected tab:", selectedTab);
+    }
+  };
   return (
-    <div className="collection-metafields-template space-y-4">
-      <div className="collection-metafields-template-heading flex justify-between items-center">
-        <h2 className="text-2xl inline-block">Collection Data</h2>
-        <div className="collection-metafields-template-heading-action flex items-center gap-8">
-          <a href="/" target="_blank">Trang quản trị</a>
-          <a href="/" target="_blank">Xem ngoài web</a>
-        </div>
-      </div>
-
-
-      <ul class="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200">
-        <li class="me-2">
-          <a href="#" aria-current="page" class="inline-block p-4 text-blue-600 bg-gray-100 rounded-t-lg active">Profile</a>
-        </li>
-        <li class="me-2">
-          <a href="#" class="inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 ">Dashboard</a>
-        </li>
-        <li class="me-2">
-          <a href="#" class="inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50">Settings</a>
-        </li>
-      </ul>
-
-      <div className="collection-metafields-template-editor">
-        <form className="form">
-          <div className="form-group">
-            <label htmlFor="namespace">Trạng thái kích hoạt</label>
-            <input className="form-control" type="checkbox" id="namespace" name="namespace" placeholder="Namespace" />
-          </div>
-          <div className="form-group">
-            <label htmlFor="namespace">Tiêu đề</label>
-            <input className="form-control" type="text" id="namespace" name="namespace" placeholder="Namespace" />
-          </div>
-          <div className="form-group">
-            <label htmlFor="key">Mô tả</label>
-            <TinyEditor />
-          </div>
-        </form>
-      </div>
-    </div>
+    <Space className="flex!" direction="vertical" size="large">
+      <Flex gap="large" justify="space-between" align="center">
+        <Typography.Title level={3} className="text-2xl">Nhóm sản phẩm</Typography.Title>
+        <Flex gap="small">
+          <Button htmlType="button" type="link">Trang quản trị</Button>
+          <Button htmlType="button" type="link">Xem ngoài web</Button>
+        </Flex>
+      </Flex>
+      <Tabs items={tabItems} onTabClick={handleOnClick} type="editable-card"></Tabs>
+    </Space>
   );
 };
 
-export default CollectionMetafields;
+export default CollectionMetafields; 

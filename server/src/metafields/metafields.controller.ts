@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { MetafieldsService } from './metafields.service';
 import { ShopAuth } from '../common/decorators/shop-auth.decorator';
 import { ShopAuthGuard } from '../common/guards/shop-auth.guard';
@@ -24,9 +24,9 @@ export class MetafieldsController {
 
   @UseGuards(ShopAuthGuard)
   @Put()
-  async updateMetafields(@ShopAuth() auth, @Query() query) {
+  async updateMetafields(@ShopAuth() auth, @Query() query, @Body() body) {
     const { shop, token } = auth;
-    return await this.metafieldsService.updateMetafields(shop, token, query);
+    return await this.metafieldsService.updateMetafields(shop, token, body);
   }
 
   @UseGuards(ShopAuthGuard)

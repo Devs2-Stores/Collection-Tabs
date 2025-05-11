@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import BaseService from "./BaseService";
 import httpClient from "../config/AxiosConfig";
+import { message } from "antd";
 
 export default class MetafieldsService extends BaseService {
   useGetMetafields = (data) => {
@@ -17,11 +18,11 @@ export default class MetafieldsService extends BaseService {
           return this.toResult(response);
         } catch (error) {
           this.toResultError(error);
-        } 
+        }
       },
       select: (response) => {
-        if (response.data.length === 0) return response.data;
-        return JSON.parse(response.data);
+        if (response.data) return response.data;
+        return response.data;
       },
     });
   };
@@ -31,7 +32,7 @@ export default class MetafieldsService extends BaseService {
     return useMutation({
       mutationFn: async (variables) => {
         try {
-          const response = await httpClient.post(`/fields`, variables);
+          const response = await httpClient.post(`/metafields`, variables);
           return this.toResult(response);
         } catch (error) {
           const handleError = this.toResultError(error);
@@ -69,8 +70,7 @@ export default class MetafieldsService extends BaseService {
     return useMutation({
       mutationFn: async (variables) => {
         try {
-          const { key } = variables;
-          const response = await httpClient.patch(`/fields/${key}`, variables);
+          const response = await httpClient.put(`/api/metafields`, variables);
           return this.toResult(response);
         } catch (error) {
           const handleError = this.toResultError(error);
@@ -82,23 +82,18 @@ export default class MetafieldsService extends BaseService {
       },
       onSuccess: (newData, variables) => {
         if (!newData) return;
-        const cache = queryClient.getQueryData(["fields", variables.type]);
+        const cache = queryClient.getQueryData(["metafields", variables.type, variables.objectID]);
         if (!cache) return;
-        queryClient.setQueryData(["fields", variables.type], (oddData) => {
-          return {
-            status: newData?.status || 200,
-            data: newData.data,
-          };
+        queryClient.setQueryData(["metafields", variables.type, variables.objectID], (oddData) => {
+          const findOldMetafield = oddData.data.metafields.find((metafield) => metafield.id === variables.metafieldID);
+          if (findOldMetafield) {
+            // Remove cái cũ, append cái mới
+            oddData.data.metafields = oddData.data.metafields.filter((metafield) => metafield.id !== variables.metafieldID);
+            oddData.data.metafields.push(newData.data.metafield);
+          }
+          message.success("Cập nhật Field thành công");
+          return oddData;
         });
-        newData?.success &&
-          message.open({
-            type: "success",
-            content: "Cập nhật Field thành công",
-          });
-      },
-      onSettled: (newData, variables) => {
-        if (!newData) return;
-        queryClient.invalidateQueries(["fields", variables.type]);
       },
     });
   };
