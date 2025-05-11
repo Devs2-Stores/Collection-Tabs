@@ -56,7 +56,7 @@ export default class AuthService extends BaseService {
 
   async login() {
     try {
-      const response = await httpClient.post("/oauth/install/login");
+      const response = await httpClient.post("/api/oauth/install/login");
       return this.toResult(response);
     } catch (error) {
       return this.toResultError(error);
@@ -65,7 +65,7 @@ export default class AuthService extends BaseService {
 
   async install() {
     try {
-      const response = await httpClient.post("/oauth/install/grandservice");
+      const response = await httpClient.post("/api/oauth/install/grandservice");
       return this.toResult(response);
     } catch (error) {
       return this.toResultError(error);

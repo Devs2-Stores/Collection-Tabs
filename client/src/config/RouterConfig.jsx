@@ -1,10 +1,10 @@
 import Home from "../pages/home/index";
-import Login from "../pages/login/index";
-import Install from "../pages/install/index";
+import Auth from "../pages/auth/index";
+import CollectionMetafields from "../pages/collection/metafields/index";
 
 export const routes = [
   {
-    path: "/",
+    path: "/", 
     layout: false,
     isPrivate: false,
     page: <Home />,
@@ -13,6 +13,12 @@ export const routes = [
     path: "/install/login",
     layout: false,
     isPrivate: false,
-    page: <Login />,
+    page: <Auth />,
+  },
+  {
+    path: "/collection/metafields/",
+    layout: false,
+    isPrivate: false,
+    page: <CollectionMetafields />,
   }
 ];

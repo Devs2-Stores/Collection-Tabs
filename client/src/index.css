@@ -1,4 +1,41 @@
 @import "tailwindcss";
+@theme {
+  --color-success: #428445;
+  --color-error: #EB001B;
+  --color-main: #F30;
+  --color-border: #EEE;
+}
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+  img{ max-width: 100%; height: auto; } 
+  .grid > *{ min-width: 0; }
+  body{ @apply overflow-x-hidden;}
+  main{
+    @apply p-8 w-screen min-h-screen bg-gray-200;
+    .container{
+      @apply mx-auto bg-white shadow-md rounded-lg p-4;
+    }
+  }
+  .form{
+		@apply relative max-w-full space-y-4;
+		.form-group{
+			@apply space-y-2 space-x-2;
+			label{
+				@apply inline-block font-medium; 
+        &.required{ @apply after:content-["*"] after:text-red-500; }
+			}
+      input.form-control{ 
+        &[type="text"]{
+          @apply block w-full py-1.5 px-5 border border-border focus:border-main; 
+          border-radius: 10px;
+        }
+      }
+		}
+		.form-success{ @apply hidden font-bold items-center gap-2 text-success; }
+		.form-error{ @apply hidden font-bold items-center gap-2 text-error; }
+	}
+}
+.tox-promotion{ display: none; }
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -25,8 +62,6 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
 }
