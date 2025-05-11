@@ -1,14 +1,19 @@
 import { useEffect } from "react";
-import { collectionService } from "../../../services/CollectionService";
 import TinyEditor from "../../../components/Editor";
 import { useSearchParams } from "react-router";
+import { metafieldsService } from "../../../services/MetafieldsService";
 
 const CollectionMetafields = () => {
   const [searchParams] = useSearchParams();
+  const id = searchParams.get("id");
+  const { isLoading: field_loading, data: field_data } = metafieldsService.useGetMetafields({
+    type: "collection",
+    id: id,
+  });
   useEffect(() => {
-    const id = searchParams.get("id");
+    
     console.log(id);
-    collectionService.fetchCollection();
+    
   }, []);
   return (
     <div className="collection-metafields-template space-y-4">
