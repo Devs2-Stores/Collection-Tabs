@@ -41,21 +41,21 @@ export default class HaravanAPI {
     };
   }
 
-  static async updateMetafields(shop, token, data) {
-    const { objectID, type, metafieldID, values } = data;
+  static async createMetafields(shop, token, data) {
+    const { objectID, type, metafieldID, values, key } = data;
     const metafield = {
+      namespace: "f1genztabs",
+      key: JSON.parse(values).key,
       value: values,
       value_type: 'json',
     };
-    const url = `https://apis.haravan.com/com/metafields/${metafieldID}.json`;
+    console.log(metafield);
+    const url = `https://apis.haravan.com/com/collections/${objectID}/metafields.json`;
     const headers = {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
     };
-
-    console.log(token)
-    const response = await axios.put(url, { metafield }, { headers });
-    console.log(response.data.metafield);
+    const response = await axios.post(url, { metafield }, { headers });
     if (!response) {
       return {
         success: false,
@@ -73,4 +73,36 @@ export default class HaravanAPI {
       errorMessage: null,
     };
   }
+
+  static async updateMetafields(shop, token, data) {
+    const { objectID, type, metafieldID, values } = data;
+    const metafield = {
+      value: values,
+      value_type: 'json',
+    };
+    console.log(metafield);
+    const url = `https://apis.haravan.com/com/metafields/${metafieldID}.json`;
+    const headers = {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    };
+    const response = await axios.put(url, { metafield }, { headers });
+    if (!response) {
+      return {
+        success: false,
+        data: null,
+        status: 500,
+        errorCode: 'METAFIELDS_NOT_FOUND',
+        errorMessage: 'Metafields not found',
+      };
+    }
+    return {
+      success: true,
+      data: response.data,
+      status: 200,
+      errorCode: null,
+      errorMessage: null,
+    };
+  }
+  
 }

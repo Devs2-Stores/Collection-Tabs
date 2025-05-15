@@ -11,13 +11,14 @@ export class MetafieldsService {
     if (!type || !id) throw new BadRequestException("Type and ID are required");
     const decryptToken = await this.tokenService.decryptToken(token);
     return await HaravanAPI.getMetafields(shop, decryptToken, type, id);
-  }
+  } 
 
-  async createMetafields(shop: string, token: string, query: any) {
+  async createMetafields(shop: string, token: string, values: { objectID: string, type: string, metafieldID: string, values: any }) {
     if (!shop || !token) throw new UnauthorizedException();
-    return "Metafields created";
+    const decryptToken = await this.tokenService.decryptToken(token);
+    return await HaravanAPI.createMetafields(shop, decryptToken, values);
   }
-  async updateMetafields(shop: string, token: string, values: Object) {
+  async updateMetafields(shop: string, token: string, values: { objectID: string, type: string, metafieldID: string, values: any }) {
     if (!shop || !token) throw new UnauthorizedException();
     const decryptToken = await this.tokenService.decryptToken(token);
     return await HaravanAPI.updateMetafields(shop, decryptToken, values);

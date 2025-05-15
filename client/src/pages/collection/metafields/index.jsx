@@ -1,46 +1,57 @@
+import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router";
 import { metafieldsService } from "../../../services/MetafieldsService";
 import Spinner from "../../../components/Spinner";
 
 import { Space, Flex, Typography, Button, Tabs } from 'antd';
 import CollectionMetafieldsForm from "./form";
-import { use, useEffect } from "react";
+ 
 const CollectionMetafields = () => {
+
+  const MAX_TABS = 10;
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
-  const { isLoading: field_loading, data: field_data } = metafieldsService.useGetMetafields({
-    type: "collection",
-    id: id,
-  });
+  const { isLoading: field_loading, data: field_data } = metafieldsService.useGetMetafields({type: "collection", id: id });
+  const [tabItems, setTabItems] = useState([]);
+
+  useEffect(() => {
+    // Tạo map để tra cứu nhanh metafield theo key
+    const metafieldMap = {};
+    field_data?.metafields?.forEach((mf) => {
+      try {
+        const key = JSON.parse(mf.value)?.key;
+        if (key) metafieldMap[key] = mf;
+      } catch { }
+    });
+
+    const tabs = Array.from({ length: MAX_TABS }, (_, i) => {
+      const key = `tabs${i + 1}`;
+      const field = metafieldMap[key] || {};
+      const title = field.value ? JSON.parse(field.value).title : `Tab ${i + 1}`;
+      return {
+        key: field.id || `new_${i + 1}`,
+        label: title,
+        children: (
+          <CollectionMetafieldsForm field={field} objectID={id} tabIndex={key} />
+        ),
+      };
+    });
+    setTabItems(tabs);
+  }, [field_data, id]);
+
   if (field_loading) return <Spinner />;
-  const tabItems = field_data?.metafields.map((field) => {
-    const title = JSON.parse(field.value).title;
-    return ({
-      closable: false,
-      key: field.id,
-      label: title,
-      children: <CollectionMetafieldsForm field={field} objectID={id} />,
-    })
-  });
-  const handleOnClick = (key) => {
-    const selectedTab = field_data?.metafields.find((field) => field.id === key);
-    if (selectedTab) {
-      // Handle the click event for the selected tab
-      console.log("Selected tab:", selectedTab);
-    }
-  };
+
   return (
     <Space className="flex!" direction="vertical" size="large">
       <Flex gap="large" justify="space-between" align="center">
-        <Typography.Title level={3} className="text-2xl">Nhóm sản phẩm</Typography.Title>
+        <Typography.Title level={3} className="text-2xl mb-0!">Nhóm sản phẩm - Collection Tabs</Typography.Title>
         <Flex gap="small">
           <Button htmlType="button" type="link">Trang quản trị</Button>
-          <Button htmlType="button" type="link">Xem ngoài web</Button>
         </Flex>
       </Flex>
-      <Tabs items={tabItems} onTabClick={handleOnClick} type="editable-card"></Tabs>
+      <Tabs size="small" items={tabItems} type="line"></Tabs>
     </Space>
   );
 };
 
-export default CollectionMetafields; 
+export default CollectionMetafields;

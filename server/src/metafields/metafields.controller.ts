@@ -17,14 +17,14 @@ export class MetafieldsController {
 
   @UseGuards(ShopAuthGuard)
   @Post()
-  async createMetafields(@ShopAuth() auth, @Query() query) {
+  async createMetafields(@ShopAuth() auth, @Body() body) {
     const { shop, token } = auth;
-    return await this.metafieldsService.createMetafields(shop, token, query);
+    return await this.metafieldsService.createMetafields(shop, token, body);
   }
 
   @UseGuards(ShopAuthGuard)
   @Put()
-  async updateMetafields(@ShopAuth() auth, @Query() query, @Body() body) {
+  async updateMetafields(@ShopAuth() auth, @Body() body) {
     const { shop, token } = auth;
     return await this.metafieldsService.updateMetafields(shop, token, body);
   }
